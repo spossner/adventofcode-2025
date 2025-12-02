@@ -9,16 +9,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # select one of
-# DEV, PART2 = True, False # DEV PART1
+# DEV, PART2 = True, False  # DEV PART1
 # DEV, PART2 = False, False # PROD PART1
 # DEV, PART2 = True, True # DEV PART2
-DEV, PART2 = False, True  # PROD PART2
+DEV, PART2 = False, True # PROD PART2
 
 STRIP = True
-SPLIT_LINES = True
-SPLIT_CHAR = None
+SPLIT_LINES = False
+SPLIT_CHAR = ","
 GET_INTS = False
 DATA = None
+
 AOC_SESSION = os.environ.get("AOC_SESSION")
 YEAR = 2025
 
@@ -53,38 +54,52 @@ class Solution:
         self.data = self.parse_data(data)
 
     def parse_data(self, data):
-        return list(map(lambda d: (d[0], int(d[1:])), data))
+        return data
 
     def first_part(self):
         result = 0
-        current = 50
-        for direction, num in self.data:
-            last = current
-            if direction == "L":
-                current = (current - num) % 100
-            else:
-                current = (current + num) % 100
-            # print(f"{last} rotated {direction}{num} -> {current}")
-            if current == 0:
-                result += 1
+        for row in self.data:
+            lower_str, upper_str = row.split("-")
+            lower, upper = int(lower_str), int(upper_str)
+            print(f"checking {lower}-{upper}")
+
+            for i in range(1, upper):
+                target_str=f"{i}" * 2
+                target = int(target_str)
+                if target > upper:
+                    break
+                if target >= lower:
+                    # print(f"{lower}-{upper}\tcontains\t{target_str}")
+                    result += target
 
         return result
+    # 15873079070 too low - missed the [2-17]
+    # 15873079081
 
     def second_part(self):
         result = 0
-        current = 50
-        for direction, num in self.data:
-            if direction == "L":
-                if (current - num) < 0: # passed zero to the left
-                    if current != 0: # if not started at zero -> passed 0 once
-                        result += 1
-                    result += abs((100 + current - num) // 100)
-                current = (current - num) % 100
-                if current == 0:
-                    result += 1
-            else:
-                result += (current + num) // 100
-                current = (current + num) % 100
+        for row in self.data:
+            lower_str, upper_str = row.split("-")
+            lower, upper = int(lower_str), int(upper_str)
+            seen = set()
+            # print(f"checking {lower}-{upper}")
+
+            for i in range(1, (upper >> 1) * 10):
+                min_pair = int(f"{i}{i}")
+                if min_pair > upper:
+                    break
+
+                for j in range(2,upper):
+                    target_str = f"{i}" * j
+                    target = int(target_str)
+                    if target > upper:
+                        break
+                    if target in seen:
+                        continue
+                    seen.add(target)
+                    if target >= lower:
+                        # print(f"{lower}-{upper}\tcontains\t{target_str}")
+                        result += target
 
         return result
 
