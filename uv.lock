@@ -7,7 +7,7 @@ name = "2025"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "aoc-lib" },
+    { name = "aoc" },
     { name = "python-dotenv" },
     { name = "requests" },
 ]
@@ -19,7 +19,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aoc-lib", directory = "../aoc-lib" },
+    { name = "aoc", editable = "../aoc" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "requests", specifier = ">=2.32.5" },
 ]
@@ -28,9 +28,18 @@ requires-dist = [
 dev = [{ name = "ruff", specifier = ">=0.8.0" }]
 
 [[package]]
-name = "aoc-lib"
-version = "1.1.7"
-source = { directory = "../aoc-lib" }
+name = "aoc"
+version = "0.1.0"
+source = { editable = "../aoc" }
+
+[package.metadata]
+requires-dist = [
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "certifi"
