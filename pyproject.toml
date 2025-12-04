@@ -16,4 +16,4 @@ dev = [
 ]
 
 [tool.uv.sources]
-aoc = { path = "../aoc", editable = true }
+aoc = { path = "../aoc-lib", editable = true }
