@@ -18,53 +18,49 @@ STRIP = True
 SPLIT_LINES = True
 SPLIT_CHAR = None
 GET_INTS = False
-DATA = None
+DATA_OVERWRITE = None
 AOC_SESSION = os.environ.get("AOC_SESSION")
 YEAR = 2025
 
 
-class Solution:
-    def __init__(self, data):
-        if data and STRIP and type(data) is str:
-            data = data.strip()
-        if data and SPLIT_LINES and type(data) is str:
-            data = data.splitlines()
-        if data and SPLIT_CHAR is not None:
-            if SPLIT_CHAR == "":
-                data = [list(row) for row in data] if SPLIT_LINES else list(data)
-            else:
-                data = (
-                    [row.split(SPLIT_CHAR) for row in data]
-                    if SPLIT_LINES
-                    else data.split(SPLIT_CHAR)
+def parse_data(puzzle_input):
+    if puzzle_input and STRIP and type(puzzle_input) is str:
+        puzzle_input = puzzle_input.strip()
+    if puzzle_input and SPLIT_LINES and type(puzzle_input) is str:
+        puzzle_input = puzzle_input.splitlines()
+    if puzzle_input and SPLIT_CHAR is not None:
+        if SPLIT_CHAR == "":
+            puzzle_input = [list(row) for row in puzzle_input] if SPLIT_LINES else list(puzzle_input)
+        else:
+            puzzle_input = (
+                [row.split(SPLIT_CHAR) for row in puzzle_input]
+                if SPLIT_LINES
+                else puzzle_input.split(SPLIT_CHAR)
+            )
+    if GET_INTS:
+        if type(puzzle_input) is str:
+            puzzle_input = get_ints(puzzle_input)
+        else:
+            puzzle_input = list(
+                map(
+                    lambda e: get_ints(e)
+                    if type(e) is str
+                    else [get_ints(v) for v in e],
+                    puzzle_input,
                 )
-        if GET_INTS:
-            if type(data) is str:
-                data = get_ints(data)
-            else:
-                data = list(
-                    map(
-                        lambda e: get_ints(e)
-                        if type(e) is str
-                        else [get_ints(v) for v in e],
-                        data,
-                    )
-                )
-        self.data = self.parse_data(data)
+            )
+    return puzzle_input
 
-    def parse_data(self, data):
-        return data
+def first_part(data):
+    result = 0
 
-    def first_part(self):
-        result = 0
+    for row in data:
+        print(row)
 
-        for row in self.data:
-            print(row)
+    return result
 
-        return result
-
-    def second_part(self):
-        return self.first_part()
+def second_part(data):
+    return first_part(data)
 
 
 if __name__ == "__main__":
@@ -74,7 +70,8 @@ if __name__ == "__main__":
 
     DATA_URL = f"https://adventofcode.com/{YEAR}/day/{int(script)}/input"
 
-    if not DATA:
+    data = DATA_OVERWRITE
+    if not data:
         file_name = (
             f"{script}-dev{DEV if type(DEV) is not bool else ''}.txt"
             if DEV
@@ -82,14 +79,14 @@ if __name__ == "__main__":
         )
         if exists(file_name):
             with open(file_name) as f:
-                DATA = f.read()
+                data = f.read()
         elif AOC_SESSION and DATA_URL:
-            DATA = requests.get(
+            data = requests.get(
                 DATA_URL, headers={"Cookie": f"session={AOC_SESSION}"}
             ).text
             with open(file_name, "w") as f:
-                f.write(DATA)
+                f.write(data)
 
     print(f"DAY {int(script)}")
-    s = Solution(DATA)
-    print("RESULT", s.first_part() if not PART2 else s.second_part())
+    parsed_data = parse_data(data)
+    print("RESULT", first_part(parsed_data) if not PART2 else second_part(parsed_data))
