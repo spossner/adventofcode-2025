@@ -51,6 +51,9 @@ def parse_data(puzzle_input):
             )
     return puzzle_input
 
+def convert_data(data):
+    return data
+
 def first_part(data):
     result = 0
 
@@ -89,4 +92,5 @@ if __name__ == "__main__":
 
     print(f"DAY {int(script)}")
     parsed_data = parse_data(data)
-    print("RESULT", first_part(parsed_data) if not PART2 else second_part(parsed_data))
+    converted_data = convert_data(parsed_data)
+    print("RESULT", first_part(converted_data) if not PART2 else second_part(converted_data))
